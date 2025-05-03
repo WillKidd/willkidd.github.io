@@ -41,15 +41,36 @@
   <svg></svg>
 
   <script>
+/*const nodes = [
+  { id: "interpreter", name: "Interpreter", checked: false },
+  { id: "memory-allocator", name: "Memory Allocator", checked: false },
+  { id: "shell", name: "Shell", checked: false },
+  { id: "filesystem", name: "Filesystem", checked: false },
+  { id: "text-editor", name: "Text Editor", checked: false },
+  { id: "key-value-store", name: "Key-Value Store", checked: false },
+  { id: "hashtable", name: "Hashtable", checked: false },
+  { id: "database", name: "Database", checked: false },
+  { id: "kernel", name: "Kernel", checked: false },
+  { id: "bootloader", name: "Bootloader", checked: false },
+  { id: "virtual-machine", name: "Virtual Machine", checked: false },
+  { id: "redis", name: "Redis", checked: false },
+  { id: "compiler", name: "Compiler", checked: false },
+  { id: "fuse-fs", name: "FUSE Filesystem", checked: false },
+  { id: "chip8-emulator", name: "CHIP-8 Emulator", checked: false },
+  { id: "tcpip", name: "TCP/IP Stack", checked: false },
+  { id: "debugger", name: "Linux Debugger", checked: false },
+  { id: "llvm-lang", name: "LLVM-based Language", checked: false },
+  { id: "kvm", name: "KVM Kernel Module", checked: false },
+  { id: "container", name: "Linux Container", checked: false }
+];*/
+
     const nodes = [
-      { id: "portfolio", name: "Portfolio-Website", checked: true },
-      { id: "blog", name: "Blog mit Markdown", checked: false },
-      { id: "spring", name: "Spring Boot API", checked: false }
+      {id: "interpreter", name:"Interpreter", checked: false}
     ];
 
     const links = [
-      { source: "portfolio", target: "blog" },
-      { source: "portfolio", target: "spring" }
+      //{ source: "portfolio", target: "blog" },
+      //{ source: "portfolio", target: "spring" }
     ];
 
     const svg = d3.select("svg");
