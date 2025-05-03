@@ -2,51 +2,141 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meine Projekte</title>
+  <title>Projekt-Graph</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <style>
     body {
       font-family: sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 2em;
-      max-width: 800px;
-      margin: auto;
+      background-color: #f4f4f4;
     }
-    h1 {
-      color: #333;
+    svg {
+      width: 100%;
+      height: 600px;
     }
-    ul {
-      list-style: none;
-      padding-left: 0;
+    .node rect {
+      fill: white;
+      stroke: #999;
+      stroke-width: 2px;
+      rx: 10;
+      ry: 10;
     }
-    li {
-      background: #fff;
-      margin-bottom: 0.5em;
-      padding: 1em;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    .node text {
+      pointer-events: none;
+      font-size: 14px;
     }
-    input[type="checkbox"] {
-      transform: scale(1.2);
-      margin-right: 0.5em;
+    .checkbox {
+      pointer-events: all;
+      transform: scale(1.5);
     }
-    label {
-      font-size: 1.1em;
+    .link {
+      fill: none;
+      stroke: #666;
+      stroke-width: 2px;
+      marker-end: url(#arrow);
     }
   </style>
 </head>
 <body>
-  <h1>🛠️ Meine Projekt-Checkliste</h1>
-  <ul>
-    <li><label><input type="checkbox"> Portfolio-Website mit GitHub Pages</label></li>
-    <li><label><input type="checkbox"> Persönlicher Blog mit Markdown</label></li>
-    <li><label><input type="checkbox"> REST API mit Spring Boot</label></li>
-    <li><label><input type="checkbox"> Data Science Projekt mit Python</label></li>
-    <li><label><input type="checkbox"> Flutter App: Todo-List</label></li>
-    <li><label><input type="checkbox"> Arduino Projekt: Mycosonic</label></li>
-    <li><label><input type="checkbox"> ML-Modell: Bilderkennung</label></li>
-    <li><label><input type="checkbox"> Cybersecurity Demo (z. B. IT-Forensik)</label></li>
-  </ul>
+  <h1 style="text-align:center;">🗺️ Projekt-Roadmap</h1>
+  <svg></svg>
+
+  <script>
+    const nodes = [
+      { id: "portfolio", name: "Portfolio-Website", checked: true },
+      { id: "blog", name: "Blog mit Markdown", checked: false },
+      { id: "spring", name: "Spring Boot API", checked: false }
+    ];
+
+    const links = [
+      { source: "portfolio", target: "blog" },
+      { source: "portfolio", target: "spring" }
+    ];
+
+    const svg = d3.select("svg");
+    const width = window.innerWidth;
+    const height = 600;
+
+    svg.attr("width", width).attr("height", height);
+
+    svg.append("defs").append("marker")
+      .attr("id", "arrow")
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 25)
+      .attr("refY", 0)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")
+      .attr("fill", "#666");
+
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+      .force("charge", d3.forceManyBody().strength(-500))
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+    const link = svg.append("g")
+      .selectAll("line")
+      .data(links)
+      .join("line")
+      .attr("class", "link");
+
+    const node = svg.append("g")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
+      .attr("class", "node")
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    node.append("rect")
+      .attr("width", 180)
+      .attr("height", 50)
+      .attr("x", -90)
+      .attr("y", -25);
+
+    node.append("foreignObject")
+      .attr("x", -85)
+      .attr("y", -15)
+      .attr("width", 170)
+      .attr("height", 40)
+      .append("xhtml:div")
+      .html(d => `
+        <label style="display: flex; align-items: center;">
+          <input type="checkbox" class="checkbox" ${d.checked ? "checked" : ""}/>
+          <span style="margin-left: 0.5em;">${d.name}</span>
+        </label>
+      `);
+
+    simulation.on("tick", () => {
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      node
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+  </script>
 </body>
 </html>
